@@ -3,6 +3,14 @@
 ck is a viewer for [CockroachDB](https://github.com/cockroachdb/cockroach) keys.
 It can connect to an insecure node and display a web frontend for the KV layer.
 
+## installation
+
+`go get github.com/mjibson/ck`
+
+## usage
+
+Run `ck`, then open [http://localhost:2015](http://localhost:2015).
+
 ## development
 
 1. Install JavaScript dependencies: `npm install`.
