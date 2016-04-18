@@ -41,6 +41,7 @@ func main() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/api/keys", wrap(Keys))
 	http.HandleFunc("/api/values", wrap(Values))
+	fmt.Println("listening on", *flagAddr)
 	log.Fatal(http.ListenAndServe(*flagAddr, nil))
 }
 
