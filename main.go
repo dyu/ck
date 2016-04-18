@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -116,7 +117,20 @@ func Values(r *http.Request) (interface{}, error) {
 		return nil, err.GoError()
 	}
 	for i, r := range b.Results {
-		resp.Values[i] = r.Rows[0].PrettyValue()
+		v := r.Rows[0].Value
+		var s string
+		switch v.GetTag() {
+		// TODO(mjibson): support DECIMAL in PrettyValue()
+		case roachpb.ValueType_DECIMAL:
+			d, err := v.GetDecimal()
+			if err != nil {
+				return nil, err
+			}
+			s = d.String()
+		default:
+			s = r.Rows[0].PrettyValue()
+		}
+		resp.Values[i] = fmt.Sprintf("%s: %s", v.GetTag(), s)
 	}
 	return resp, nil
 }
