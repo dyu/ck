@@ -45,6 +45,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(*flagAddr, nil))
 }
 
+// Index TODO
 func Index(w http.ResponseWriter, r *http.Request) {
 	w.Write(FSMustByte(*flagDev, "/static/index.html"))
 }
@@ -68,6 +69,7 @@ func wrap(f func(r *http.Request) (interface{}, error)) http.HandlerFunc {
 	}
 }
 
+// Keys TODO
 func Keys(r *http.Request) (interface{}, error) {
 	resp := struct {
 		Keys map[string][]byte
@@ -77,9 +79,9 @@ func Keys(r *http.Request) (interface{}, error) {
 	var begin interface{} = keys.LocalMax
 	const max = 1000
 	for {
-		kvs, err := db.ScanInconsistent(begin, keys.MaxKey, max)
+		kvs, err := db.Scan(begin, keys.MaxKey, max)
 		if err != nil {
-			return nil, err.GoError()
+			return nil, err
 		}
 		for _, kv := range kvs {
 			resp.Keys[kv.Key.String()] = []byte(kv.Key)
@@ -92,6 +94,7 @@ func Keys(r *http.Request) (interface{}, error) {
 	return resp, nil
 }
 
+// Values TODO
 func Values(r *http.Request) (interface{}, error) {
 	req := struct {
 		Keys []string
@@ -112,10 +115,10 @@ func Values(r *http.Request) (interface{}, error) {
 		}
 		b.Get(key)
 	}
-	b.ReadConsistency = roachpb.INCONSISTENT
+	//b.ReadConsistency = roachpb.INCONSISTENT
 	err := db.Run(b)
 	if err != nil {
-		return nil, err.GoError()
+		return nil, err
 	}
 	for i, r := range b.Results {
 		v := r.Rows[0].Value
